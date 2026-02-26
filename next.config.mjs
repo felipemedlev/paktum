@@ -4,9 +4,6 @@ import createNextIntlPlugin from 'next-intl/plugin';
 const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 
 /** @type {import('next').NextConfig} */
-const nextConfig = {
-  // Explicitly set the src directory
-  distDir: '.next',
-};
+const nextConfig = {};
 
 export default withNextIntl(nextConfig);
