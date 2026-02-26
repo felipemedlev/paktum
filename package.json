@@ -1,5 +1,5 @@
 {
-  "name": "pactify-app",
+  "name": "paktum-app",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,18 +9,40 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ai-sdk/react": "^3.0.102",
+    "@langchain/community": "^1.1.19",
+    "@langchain/core": "^1.1.28",
+    "@langchain/openai": "^1.2.10",
+    "@langchain/textsplitters": "^1.0.1",
+    "@radix-ui/react-slot": "^1.2.4",
+    "@supabase/ssr": "^0.8.0",
+    "@supabase/supabase-js": "^2.97.0",
+    "@types/uuid": "^10.0.0",
+    "ai": "^2.2.37",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "langchain": "^1.2.27",
+    "lucide-react": "^0.575.0",
+    "mammoth": "^1.11.0",
+    "next": "14.2.35",
+    "next-intl": "^4.8.3",
+    "openai": "^6.25.0",
+    "pdf-parse": "^2.4.5",
     "react": "^18",
     "react-dom": "^18",
-    "next": "14.2.35"
+    "tailwind-merge": "^3.5.0",
+    "tesseract.js": "^7.0.0",
+    "uuid": "^13.0.0"
   },
   "devDependencies": {
-    "typescript": "^5",
     "@types/node": "^20",
+    "@types/pdf-parse": "^1.1.5",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.35",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
-    "eslint": "^8",
-    "eslint-config-next": "14.2.35"
+    "typescript": "^5"
   }
 }
