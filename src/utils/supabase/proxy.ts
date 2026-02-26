@@ -25,19 +25,25 @@ export async function updateSession(request: NextRequest, response: NextResponse
   const { data: { user } } = await supabase.auth.getUser()
 
   const pathname = request.nextUrl.pathname
+
+  // Define protected and auth-only routes
   const isAuthPage = pathname.includes('/login') || pathname.includes('/register')
   const isProtectedPage = pathname.includes('/dashboard') || pathname.includes('/upload') || pathname.includes('/contracts/')
 
+  // Extract locale from pathname (e.g., /en/dashboard -> /en)
+  const pathnameParts = pathname.split('/')
+  const locale = pathnameParts[1]
+  const isLocaleExist = ['en', 'he'].includes(locale)
+  const localePrefix = isLocaleExist ? `/${locale}` : ''
+
   if (!user && isProtectedPage) {
-    const localeMatch = pathname.match(/^\/(en|he)/)
-    const localePrefix = localeMatch ? localeMatch[0] : '/en'
-    return NextResponse.redirect(new URL(`${localePrefix}/login`, request.url))
+    const redirectUrl = new URL(`${localePrefix}/login`, request.url)
+    return NextResponse.redirect(redirectUrl)
   }
 
   if (user && isAuthPage) {
-    const localeMatch = pathname.match(/^\/(en|he)/)
-    const localePrefix = localeMatch ? localeMatch[0] : '/en'
-    return NextResponse.redirect(new URL(`${localePrefix}/dashboard`, request.url))
+    const redirectUrl = new URL(`${localePrefix}/dashboard`, request.url)
+    return NextResponse.redirect(redirectUrl)
   }
 
   return response

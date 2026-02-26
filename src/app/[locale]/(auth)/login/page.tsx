@@ -1,4 +1,4 @@
-import { useTranslations } from 'next-intl';
+import { getTranslations } from 'next-intl/server';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -6,8 +6,10 @@ import { login } from '../actions';
 import Link from 'next/link';
 import { Lock } from 'lucide-react';
 
-export default function LoginPage({ searchParams }: { searchParams: { error?: string } }) {
-  const t = useTranslations('Auth');
+export default async function LoginPage({ searchParams, params }: { searchParams: Promise<{ error?: string }>; params: Promise<{ locale: string }> }) {
+  const { error } = await searchParams;
+  const { locale } = await params;
+  const t = await getTranslations('Auth');
 
   return (
     <div className="flex-1 flex items-start justify-center pt-4 pb-8 px-4 sm:px-6 lg:px-8 bg-[#f5f5f7]">
@@ -25,12 +27,13 @@ export default function LoginPage({ searchParams }: { searchParams: { error?: st
             </CardDescription>
           </CardHeader>
           <CardContent className="pt-6">
-            {searchParams?.error && (
+            {error && (
               <div className="mb-5 text-sm font-medium text-danger bg-danger-light p-3.5 rounded-xl text-center">
-                {searchParams.error}
+                {error}
               </div>
             )}
             <form action={login} className="space-y-5">
+              <input type="hidden" name="locale" value={locale} />
               <div className="space-y-2">
                 <label htmlFor="email" className="text-sm font-medium text-foreground">
                   {t('emailLabel')}

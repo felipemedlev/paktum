@@ -4,6 +4,13 @@ import createNextIntlPlugin from 'next-intl/plugin';
 const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 
 /** @type {import('next').NextConfig} */
-const nextConfig = {};
+const nextConfig = {
+  serverExternalPackages: ['pdf-parse', 'tesseract.js', 'mammoth', '@napi-rs/canvas'],
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '30mb',
+    },
+  },
+};
 
 export default withNextIntl(nextConfig);

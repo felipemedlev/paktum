@@ -40,6 +40,8 @@
     "passwordPlaceholder": "••••••••",
     "loginButton": "Sign In",
     "registerButton": "Create Account",
+    "dashboardTitle": "Dashboard",
+    "logoutButton": "Sign Out",
     "noAccount": "Don't have an account?",
     "haveAccount": "Already have an account?"
   },

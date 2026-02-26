@@ -1,3 +1,6 @@
+// Force Node.js runtime so pdf-parse (which needs canvas/DOMMatrix) works correctly
+export const runtime = 'nodejs';
+
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { parseDocument } from '@/lib/parsers';
@@ -9,7 +12,7 @@ import { systemPrompt } from '@/lib/prompt';
 // We use the service role key to bypass RLS for fetching the file from storage
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+  process.env.PAKTUM_SUPABASE_SERVICE_ROLE_KEY!
 );
 
 const openai = new OpenAI({

@@ -40,6 +40,8 @@
     "passwordPlaceholder": "••••••••",
     "loginButton": "התחבר",
     "registerButton": "צור חשבון",
+    "dashboardTitle": "לוח בקרה",
+    "logoutButton": "התנתק",
     "noAccount": "אין לך חשבון?",
     "haveAccount": "כבר יש לך חשבון?"
   },
