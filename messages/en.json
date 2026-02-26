@@ -37,7 +37,7 @@
     "emailLabel": "Email",
     "emailPlaceholder": "name@example.com",
     "passwordLabel": "Password",
-    "passwordPlaceholder": "••••••••",
+    "passwordPlaceholder": "•••••••",
     "loginButton": "Sign In",
     "registerButton": "Create Account",
     "dashboardTitle": "Dashboard",
