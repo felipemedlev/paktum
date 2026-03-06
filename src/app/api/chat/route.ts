@@ -20,7 +20,7 @@ export async function POST(req: Request) {
     // Initialize Supabase admin client to bypass RLS since this might run on the edge
     const supabaseAdmin = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      process.env.PAKTUM_SUPABASE_SERVICE_ROLE_KEY!
     );
 
     // Fetch contract and analysis context

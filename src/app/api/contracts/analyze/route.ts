@@ -4,8 +4,7 @@ export const runtime = 'nodejs';
 import { NextResponse, after } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { parseDocument } from '@/lib/parsers';
-import { RecursiveCharacterTextSplitter } from '@langchain/textsplitters';
-import { OpenAIEmbeddings } from '@langchain/openai';
+
 import OpenAI from 'openai';
 import { systemPrompt } from '@/lib/prompt';
 
@@ -70,44 +69,12 @@ export async function POST(req: Request) {
           return;
         }
 
-        // 4. Chunking (RAG preparation)
-        const splitter = new RecursiveCharacterTextSplitter({
-          chunkSize: 1000,
-          chunkOverlap: 200,
-        });
-        const chunks = await splitter.createDocuments([textContent]);
-
-        // Embed content sequentially
-        const embeddings = new OpenAIEmbeddings({
-          openAIApiKey: process.env.OPENAI_API_KEY,
-          modelName: "text-embedding-3-small"
-        });
-
-        // Execute embeddings concurrently
-        const [embeddingsArr, queryEmbedding] = await Promise.all([
-          embeddings.embedDocuments(chunks.map(c => c.pageContent)),
-          embeddings.embedQuery("Israeli employment law clauses deviation fairness standards")
-        ]);
-
-        const similarities = embeddingsArr.map((emb, idx) => {
-          let dot = 0;
-          let normA = 0;
-          let normB = 0;
-          for (let i = 0; i < emb.length; i++) {
-            dot += emb[i] * queryEmbedding[i];
-            normA += emb[i] * emb[i];
-            normB += queryEmbedding[i] * queryEmbedding[i];
-          }
-          return { chunk: chunks[idx], score: dot / (Math.sqrt(normA) * Math.sqrt(normB) || 1) };
-        });
-
-        similarities.sort((a, b) => b.score - a.score);
-        const relevantDocs = similarities.slice(0, 5).map(s => s.chunk);
-        const contextText = relevantDocs.map(d => d.pageContent).join('\n\n');
+        // Provide the entire document text to the AI model
+        const contextText = textContent;
 
         // 5. Query OpenAI GPT-4o for Structural JSON Analysis
         const completion = await openai.chat.completions.create({
-      model: "gpt-5-2025-08-07",
+      model: "gpt-5-mini-2025-08-07",
           response_format: { type: "json_object" },
           messages: [
             { role: "system", content: systemPrompt },
