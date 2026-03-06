@@ -20,29 +20,43 @@ export async function uploadContractAction(formData: FormData) {
       return { error: 'Please provide all required fields.' };
     }
 
-    // 1. Upload to Supabase Storage
+    // Check for duplicates
+    const { data: existingContract, error: existingError } = await supabase
+      .from('contracts')
+      .select('id')
+      .eq('user_id', user.id)
+      .eq('file_name', file.name)
+      .maybeSingle();
+
+    if (existingError) {
+      console.error('Duplicate Check Error:', existingError);
+      return { error: 'Failed to verify file uniqueness.' };
+    }
+
+    if (existingContract) {
+      return { error: 'You have already uploaded a contract with this file name.' };
+    }
+
+    // Set up file extension and path
     const fileExt = file.name.split('.').pop();
     const filePath = `${user.id}/${uuidv4()}.${fileExt}`;
 
-    const { error: uploadError } = await supabase.storage
-      .from('contracts')
-      .upload(filePath, file);
-
-    if (uploadError) {
-      console.error('Upload Error:', uploadError);
-      return { error: 'Failed to upload file to storage.' };
-    }
-
-    // 2. Insert into contracts table
+    // Set up file type for the database
     let fileType = 'txt';
     if (file.type === 'application/pdf') fileType = 'pdf';
     else if (file.type.includes('wordprocessingml')) fileType = 'docx';
     else if (file.type.startsWith('image/')) fileType = 'image';
 
-    const { data: contract, error: dbError } = await supabase
+    // 1 & 2. Execute Upload and DB Insert Concurrently
+    const uploadPromise = supabase.storage
+      .from('contracts')
+      .upload(filePath, file);
+
+    const dbInsertPromise = supabase
       .from('contracts')
       .insert({
         user_id: user.id,
+        user_email: user.email,
         job_title: jobTitle,
         years_of_experience: experience,
         file_name: file.name,
@@ -53,12 +67,19 @@ export async function uploadContractAction(formData: FormData) {
       .select('id')
       .single();
 
-    if (dbError) {
-      console.error('DB Insert Error:', dbError);
+    const [uploadResult, dbResult] = await Promise.all([uploadPromise, dbInsertPromise]);
+
+    if (uploadResult.error) {
+      console.error('Upload Error:', uploadResult.error);
+      return { error: 'Failed to upload file to storage.' };
+    }
+
+    if (dbResult.error) {
+      console.error('DB Insert Error:', dbResult.error);
       return { error: 'Failed to save contract details.' };
     }
 
-    return { contractId: contract.id };
+    return { contractId: dbResult.data.id };
   } catch (err: unknown) {
     console.error('Server Action Error:', err);
     return { error: err instanceof Error ? err.message : 'An unexpected error occurred.' };

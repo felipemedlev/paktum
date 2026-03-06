@@ -6,8 +6,10 @@ import { Card, CardContent } from '@/components/ui/Card';
 import { FileText, Loader2, AlertCircle, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
+import { AutoRefresh } from '@/components/AutoRefresh';
 
-export default async function ContractAnalysisPage({ params }: { params: { id: string, locale: string } }) {
+export default async function ContractAnalysisPage({ params }: { params: Promise<{ id: string, locale: string }> }) {
+  const { id, locale } = await params;
   const t = await getTranslations('Analysis');
   const supabase = await createClient();
 
@@ -16,7 +18,7 @@ export default async function ContractAnalysisPage({ params }: { params: { id: s
   const { data: contract, error } = await supabase
     .from('contracts')
     .select('*, analyses(*)')
-    .eq('id', params.id)
+    .eq('id', id)
     .single();
 
   if (error || !contract || contract.user_id !== user?.id) {
@@ -53,7 +55,7 @@ export default async function ContractAnalysisPage({ params }: { params: { id: s
               {contract.job_title}
             </h1>
             <p className="text-muted text-sm mt-0.5">
-              {contract.years_of_experience} Years Experience • Uploaded on {new Date(contract.created_at).toLocaleDateString(params.locale)}
+              {contract.years_of_experience} Years Experience • Uploaded on {new Date(contract.created_at).toLocaleDateString(locale)}
             </p>
           </div>
         </div>
@@ -77,8 +79,8 @@ export default async function ContractAnalysisPage({ params }: { params: { id: s
               </p>
             </div>
 
-            {/* Auto-refresh meta tag to check status */}
-            <meta httpEquiv="refresh" content="5" />
+            {/* Auto-refresh component to check status via router.refresh() soft-reload */}
+            <AutoRefresh interval={5000} />
           </CardContent>
         </Card>
       ) : (

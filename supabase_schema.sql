@@ -5,6 +5,7 @@
 CREATE TABLE contracts (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+  user_email TEXT,
   job_title TEXT NOT NULL,
   years_of_experience INTEGER NOT NULL,
   file_name TEXT NOT NULL,

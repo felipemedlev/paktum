@@ -1,11 +1,12 @@
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const pdfParse = require('pdf-parse');
+import { PDFParse } from 'pdf-parse';
 import * as mammoth from 'mammoth';
 import Tesseract from 'tesseract.js';
 
 export async function parsePdf(buffer: Buffer): Promise<string> {
   try {
-    const data = await pdfParse(buffer);
+    const parser = new PDFParse({ data: buffer });
+    const data = await parser.getText();
+    await parser.destroy();
     return data.text;
   } catch (err) {
     console.error('Error parsing PDF:', err);
